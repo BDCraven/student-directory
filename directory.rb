@@ -23,8 +23,22 @@ def print_header
 end
 
 def print(students)
-  students.each_with_index do |student, student_number|
-    puts "#{student_number + 1}. #{student[:name]} (#{student[:cohort]} cohort)"
+  puts "Please enter the first letter of the name of the students you wish to print"
+  first_name_let = gets.chomp
+  results = 0
+  if first_name_let == ""
+    puts "No letter entered."
+    exit
+  elsif
+    students.each_with_index do |student, student_number|
+      if student[:name][0].downcase.include?(first_name_let.downcase)
+        puts "#{student_number + 1}. #{student[:name]} (#{student[:cohort]} cohort)"
+        results += 1
+      end
+    end
+  end
+  if results == 0
+      puts "We don't have any students starting with #{first_name_let}"
   end
 end
 
