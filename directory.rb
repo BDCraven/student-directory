@@ -31,8 +31,10 @@ def input_students
     # get another name from the user
   end
   # return the array of students
+  exit if students.empty?
   students
 end
+
 @line_width = 55
 def print_header
   puts "The students of Villains Academy".center(@line_width)
