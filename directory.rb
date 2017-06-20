@@ -38,8 +38,13 @@ def print_header
   puts "-------------".center(@line_width)
 end
 
-def print(students)
-  students.each do |student|
+def print(students, cohort = "") # if no cohort argument then default is empty.
+  if cohort != "" # if not empty we select all students whose cohort matches the
+    # argument supplied. Remember we converted the month from a string to a
+    # symbol.
+  students = students.select { |student| student[:cohort] == cohort}
+  end
+  students.sort_by {|cohort| cohort[:cohort]}.each do |student|
     puts "  #{student[:name]}".ljust(40) + "(#{student[:cohort]} cohort)".ljust(@line_width)
   end
 end
@@ -52,5 +57,5 @@ end
 students = input_students
 # nothing happens until we call the methods
 print_header
-print(students)
+print(students, :May) # optional argument to sepecify cohort month.
 print_footer(students)
