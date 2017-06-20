@@ -26,7 +26,7 @@ def input_students
     end
     # add the student hash to the array
     students << {name: name, cohort: cohort.to_sym}
-    puts "Now we have #{students.count} students"
+    puts "Now we have #{students.count} " + (students.count > 1 ? "students" : "student")
     # get another name from the user
   end
   # return the array of students
@@ -51,7 +51,7 @@ end
 
 def print_footer(students)
   puts "-------------".center(@line_width)
-  puts "Overall, we have #{students.count} great students".center(@line_width)
+  puts ("Overall, we have #{students.count} great " + (students.count > 1 ? "students" : "student")).center(@line_width)
 end
 
 students = input_students
