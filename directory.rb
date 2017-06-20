@@ -10,11 +10,12 @@ def input_students
   # while the name is not empty, repeat this code
   while true do
     puts "Please enter the student's full name"
-    name = gets.chomp
+    name = gets.delete!("\n") # delete last return character. An alt to .chomp
     break if name.empty?
 
     puts "Please enter the month of the student's cohort or leave blank if you are not sure"
-    cohort = gets.chomp.capitalize
+    cohort = gets.gsub("\n","").capitalize # substitute newline for empty
+    # string. Another alternative to chomp.
 
     while !cohort_months.include?(cohort) && cohort != ""
       puts "That is not a recognised month please enter a month or leave blank if you are not sure"
@@ -57,5 +58,5 @@ end
 students = input_students
 # nothing happens until we call the methods
 print_header
-print(students, :May) # optional argument to sepecify cohort month.
+print(students) # optional argument to sepecify cohort month.
 print_footer(students)
