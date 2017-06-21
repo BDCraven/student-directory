@@ -1,5 +1,5 @@
 @students = [] # an empty array accessible to all methods
-
+require "csv"
 def print_menu
   puts "----Menu----"
   puts "1. Input the students"
@@ -74,12 +74,19 @@ def save_students
   puts "Please enter the name of the file you wish to save to"
   filename = STDIN.gets.chomp
   # open the file for writing
-  File.open("#{filename}.csv", "w") do |file| # file open using block
+  CSV.open("#{filename}.csv", "w") do |row|
+    # open file using csv.open and block and pipe in row
     # iterate over the array of students
+    # CSV populates each row using an array so we need to convert each hash
+    # of students to an array so [{name: Bob, cohort: :november}] needs to
+    # become ["Bob", :november]
+    # so iterate over each hash of the students array - set student to hash
+    # then append the hash values of the keys (name and cohort) to the row
+    # CSV converts the array to a csv line in the filename.
     @students.each do |student|
-      student_data = [student[:name], student[:cohort]]
-      csv_line = student_data.join(",")
-      file.puts csv_line
+      row << [student[:name], student[:cohort]]
+      #csv_line = student_data.join(",")
+      #file.puts csv_line
     end
   end
   puts "Saved #{@students.count} " + (@students.count == 1 ? "student" : "students") + " to #{filename}.csv"
@@ -102,23 +109,26 @@ end
 
 def load_students(filename = "students.csv")
   loaded_students = 0
-  File.open(filename, "r") do |file| # file open using block
+  #File.open(filename, "r") do |file| # file open using block
   # .readlines reads the entire file as individual lines and returns
   # the lines in an array.
   # next feed each element in readlines into the variable line
-    file.readlines.each do |line|
+    #file.readlines.each do |line|
     # line points to a string with newline "\n" at the end
     # therefore need to chomp the \n and split the string at ","
     # the 2 variables are assigned to the 2 parts of the split string.
-      name, cohort = line.chomp.split(',')
-    # add name and cohort as hash to @students
-        if !@students.any?{|student| student[:name] == name}
+    # With CSV we bypass the need for opening the file and reading each line.
+    # CSV opens the file and passes each line to line as an array of items
+    # seperated at the comma so line is ["name", "cohort"]
+  CSV.foreach(filename) do |line|
+    name = line[0] # to set our variables we assign them to the index of the array in line
+    cohort = line[1]
+    if !@students.any?{|student| student[:name] == name}
     # iterate over students to see if name not present in students.
     # if not present then we can call add_students.
-        add_students(name, cohort)
-        loaded_students +=1
-        end
-      end
+    add_students(name, cohort)
+    loaded_students +=1
+    end
   end
   puts "Loaded #{loaded_students.to_s} new " + (loaded_students == 1 ? "student" : "students") + " from #{filename}"
 end
@@ -135,6 +145,7 @@ def try_load_students
 end
 
 def add_students(name, cohort = :november)
+  # add name and cohort as hash to @students
   @students << {name: name, cohort: cohort.to_sym}
 end
 
