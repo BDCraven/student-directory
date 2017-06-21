@@ -4,6 +4,7 @@ def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
+  puts "4. Load the list from the students.csv"
   puts "9. Exit" # because we'll be adding more items
 end
 
@@ -22,6 +23,8 @@ def process(selection)
     show_students
   when "3"
     save_students
+  when "4"
+    load_students
   when "9"
     exit
   else
@@ -73,6 +76,22 @@ def save_students
     student_data = [student[:name], student[:cohort]]
     csv_line = student_data.join(",")
     file.puts csv_line
+  end
+  file.close
+end
+# open the file for reading
+def load_students
+  file = File.open("students.csv", "r")
+  # .readlines reads the entire file as individual lines and returns
+  # the lines in an array.
+  # next feed each element in readlines into the variable line
+  file.readlines.each do |line|
+    # line points to a string with newline "\n" at the end
+    # therefore need to chomp the \n and split the string at ","
+    # the 2 variables are assigned to the 2 parts of the split string.
+    name, cohort = line.chomp.split(',')
+    # add name and cohort as hash to @students
+    @students << {name: name, cohort: cohort.to_sym}
   end
   file.close
 end
