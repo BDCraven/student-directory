@@ -4,7 +4,7 @@ def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
-  puts "4. Load the list from the students.csv"
+  puts "4. Load the list from students.csv"
   puts "9. Exit" # because we'll be adding more items
 end
 
@@ -81,7 +81,7 @@ def save_students
 end
 # open the file for reading
 def load_students(filename = "students.csv")
-  file = File.open("students.csv", "r")
+  file = File.open(filename, "r")
   # .readlines reads the entire file as individual lines and returns
   # the lines in an array.
   # next feed each element in readlines into the variable line
@@ -101,7 +101,7 @@ def try_load_students
   return if filename.nil? # get out of the method if it isn't given
   if File.exists?(filename) # if it exists
     load_students(filename)
-    puts "Loaded #{@students.count} from #{filename}"
+    puts "Loaded #{@students.count} students from #{filename}"
   else # if it doesn't exist
     puts "Sorry, #{filename} doesn't exist."
     exit  # quit the program
