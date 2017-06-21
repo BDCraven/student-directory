@@ -1,11 +1,13 @@
 @students = [] # an empty array accessible to all methods
 
 def print_menu
+  puts "----Menu----"
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
   puts "4. Load the list from students.csv"
   puts "9. Exit" # because we'll be adding more items
+  puts "------------"
 end
 
 def interactive_menu
@@ -78,6 +80,7 @@ def save_students
     file.puts csv_line
   end
   file.close
+  puts "Saved #{@students.count} " + (@students.count == 1 ? "student" : "students") + " to students.csv"
 end
 # open the file for reading
 def load_students(filename = "students.csv")
@@ -94,6 +97,7 @@ def load_students(filename = "students.csv")
     add_students(name, cohort)
   end
   file.close
+  puts "Loaded #{@students.count} " + (@students.count == 1 ? "student" : "students") + " from #{filename}"
 end
 
 def try_load_students
@@ -101,7 +105,6 @@ def try_load_students
   return if filename.nil? # get out of the method if it isn't given
   if File.exists?(filename) # if it exists
     load_students(filename)
-    puts "Loaded #{@students.count} students from #{filename}"
   else # if it doesn't exist
     puts "Sorry, #{filename} doesn't exist."
     exit  # quit the program
