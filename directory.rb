@@ -74,15 +74,15 @@ def save_students
   puts "Please enter the name of the file you wish to save to"
   filename = STDIN.gets.chomp
   # open the file for writing
-  file = File.open("#{filename}.csv", "w")
-  # iterate over the array of students
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+  File.open("#{filename}.csv", "w") do |file| # file open using block
+    # iterate over the array of students
+    @students.each do |student|
+      student_data = [student[:name], student[:cohort]]
+      csv_line = student_data.join(",")
+      file.puts csv_line
+    end
   end
-  file.close
-  puts "Saved #{@students.count} " + (@students.count == 1 ? "student" : "students") + " to #{filename}"
+  puts "Saved #{@students.count} " + (@students.count == 1 ? "student" : "students") + " to #{filename}.csv"
 end
 # open the file for reading
 
@@ -102,24 +102,24 @@ end
 
 def load_students(filename = "students.csv")
   loaded_students = 0
-  file = File.open(filename, "r")
+  File.open(filename, "r") do |file| # file open using block
   # .readlines reads the entire file as individual lines and returns
   # the lines in an array.
   # next feed each element in readlines into the variable line
-  file.readlines.each do |line|
+    file.readlines.each do |line|
     # line points to a string with newline "\n" at the end
     # therefore need to chomp the \n and split the string at ","
     # the 2 variables are assigned to the 2 parts of the split string.
-    name, cohort = line.chomp.split(',')
+      name, cohort = line.chomp.split(',')
     # add name and cohort as hash to @students
-      if !@students.any?{|student| student[:name] == name}
+        if !@students.any?{|student| student[:name] == name}
     # iterate over students to see if name not present in students.
     # if not present then we can call add_students.
-      add_students(name, cohort)
-      loaded_students +=1
+        add_students(name, cohort)
+        loaded_students +=1
+        end
       end
   end
-  file.close
   puts "Loaded #{loaded_students.to_s} new " + (loaded_students == 1 ? "student" : "students") + " from #{filename}"
 end
 
