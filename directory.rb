@@ -1,5 +1,22 @@
 @students = [] # an empty array accessible to all methods
 require "csv"
+
+def load_students_on_startup
+  filename = ARGV.first || "students.csv" # first argument from the command line
+  return if filename.nil? # get out of the method if it isn't given
+  unless File.exists?(filename)
+    puts "Sorry, #{filename} doesn't exist."
+    exit
+  end
+  load_students(filename)
+  #if File.exists?(filename) # if it exists
+  #  load_students(filename)
+  #else # if it doesn't exist
+  #  puts "Sorry, #{filename} doesn't exist."
+  #  exit  # quit the program
+  #end
+end
+
 def print_menu
   puts "----Menu----"
   puts "1. Input the students"
@@ -13,11 +30,11 @@ end
 def interactive_menu
   loop do
     print_menu
-    process(STDIN.gets.chomp)
+    menu(STDIN.gets.chomp)
   end
 end
 
-def process(selection)
+def menu(selection) # amend method name from process to menu to make clearer
   case selection
   when "1"
     input_students
@@ -72,9 +89,9 @@ end
 
 def save_students
   puts "Please enter the name of the file you wish to save to"
-  filename = STDIN.gets.chomp
+  filename = "#{STDIN.gets.chomp}.csv"
   # open the file for writing
-  CSV.open("#{filename}.csv", "w") do |row|
+  CSV.open(filename, "w") do |row|
     # open file using csv.open and block and pipe in row
     # iterate over the array of students
     # CSV populates each row using an array so we need to convert each hash
@@ -89,20 +106,20 @@ def save_students
       #file.puts csv_line
     end
   end
-  puts "Saved #{@students.count} " + (@students.count == 1 ? "student" : "students") + " to #{filename}.csv"
+  puts "Saved #{@students.count} " + (@students.count == 1 ? "student" : "students") + " to #{filename}"
 end
 # open the file for reading
 
 def filename_to_load
   loop do
     puts "Please enter the name of the file you wish to load or press enter to exit"
-    filename = STDIN.gets.chomp
+    filename = "#{STDIN.gets.chomp}.csv"
     return if filename == ""
-    if File.exists?("#{filename}.csv")
-      load_students("#{filename}.csv")
+    if File.exists?(filename)
+      load_students(filename)
       break
     else
-      puts "'#{filename}' was not found."
+      puts "'#{filename.chomp(".csv")}' was not found."
     end
   end
 end
@@ -133,21 +150,10 @@ def load_students(filename = "students.csv")
   puts "Loaded #{loaded_students.to_s} new " + (loaded_students == 1 ? "student" : "students") + " from #{filename}"
 end
 
-def try_load_students
-  filename = ARGV.first || "students.csv" # first argument from the command line
-  return if filename.nil? # get out of the method if it isn't given
-  if File.exists?(filename) # if it exists
-    load_students(filename)
-  else # if it doesn't exist
-    puts "Sorry, #{filename} doesn't exist."
-    exit  # quit the program
-  end
-end
-
 def add_students(name, cohort = :november)
   # add name and cohort as hash to @students
   @students << {name: name, cohort: cohort.to_sym}
 end
 
-try_load_students
+load_students_on_startup
 interactive_menu
