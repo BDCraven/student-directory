@@ -1,4 +1,7 @@
 @students = [] # an empty array accessible to all methods
+@cohort_months = ["January", "February", "March", "April",
+           "May", "June", "July", "August",
+           "September", "October", "November", "December", "TBC"]
 require "csv"
 
 def load_students_on_startup
@@ -59,32 +62,58 @@ def input_students
   # while the name is not empty, repeat this code
   while !name.empty? do
     # add the student hash to the array
-    add_students(name)
-    puts "Now we have #{@students.count} students"
+    puts "Please enter the month of the student's cohort or leave blank if you are not sure"
+    cohort = gets.gsub("\n","").capitalize # substitute newline for empty
+    # string. Another alternative to chomp.
+
+    while !@cohort_months.include?(cohort) && cohort != ""
+      puts "That is not a recognised month please enter a month or leave blank if you are not sure"
+      cohort = gets.chomp.capitalize
+    end
+
+    if cohort == ""
+      cohort = "TBC"
+    end
+
+    add_students(name, cohort)
+    puts "Now we have #{@students.count} " + (@students.count > 1 ? "students" : "student")
     # get another name from the user
     name = STDIN.gets.chomp
   end
 end
 
 def show_students
+  puts "Enter a cohort month to print or leave empty to see all"
+  cohort = STDIN.gets.chomp.capitalize
   print_header
-  print_students_list
+  print_students_list(cohort)
   print_footer
 end
 
+@line_width = 55
 def print_header
-  puts "The students of Villains Academy"
-  puts "-------------"
+  puts "The students of Villains Academy".center(@line_width)
+  puts "-------------".center(@line_width)
 end
 
-def print_students_list
-  @students.each do |student|
-    puts "#{student[:name]} (#{student[:cohort]} cohort)"
+def print_students_list(cohort)
+  if cohort != "" # if not empty we select all students whose cohort matches the
+    # argument supplied. Remember we converted the month from a string to a
+    # symbol.
+  cohort_students = @students.select { |student| student[:cohort] == cohort.to_sym}
+    cohort_students.each do |student|
+      puts "  #{student[:name]}".ljust(40) + "(#{student[:cohort]} cohort)".ljust(@line_width)
+    end
+  else
+    @students.sort_by {|student| @cohort_months.map { |month| month.to_sym }.index(student[:cohort])}.each do |student|
+      puts "  #{student[:name]}".ljust(40) + "(#{student[:cohort]} cohort)".ljust(@line_width)
+    end
   end
 end
 
 def print_footer
-  puts "Overall, we have #{@students.count} great students"
+  puts "-------------".center(@line_width)
+  puts ("Overall, we have #{@students.count} great " + (@students.count > 1 ? "students" : "student")).center(@line_width)
 end
 
 def save_students
